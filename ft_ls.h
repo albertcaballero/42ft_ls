@@ -1,10 +1,7 @@
 #ifndef FT_LS_H_
 #define FT_LS_H_
 
-#include<stdio.h>
-#include<sys/stat.h>
-
-
+#include "libft/libft.h"
 
 //Define flags
 #define F_LONG		(1 << 0)
@@ -37,9 +34,6 @@ typedef struct file
 	int		type;
 } t_file;
 
-struct ft_ls
-{
-	int flags;
-};
+
 
 #endif
