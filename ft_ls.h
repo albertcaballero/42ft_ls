@@ -8,7 +8,7 @@
 #define F_RECURS	(1 << 1)
 #define F_ALL		(1 << 2)
 #define F_REVERSE	(1 << 3)
-#define F_TIME		(1 << 4) 
+#define F_TIME		(1 << 4)
 
 /* Set a flag	user_flags	|= FLAG;
 Clear a flag	user_flags &= ~FLAG;
@@ -31,7 +31,7 @@ typedef struct file
 	char 	*name;
 	struct file	*next;
 	struct file	*subdir;
-	int		type;
+	enum Type	type;
 } t_file;
 
 

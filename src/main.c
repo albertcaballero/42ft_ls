@@ -1,4 +1,4 @@
-#include "ft_ls.h"
+#include "../ft_ls.h"
 
 // -l, long format F_LONG
 // -R, --recursive, recursive  F_RECURS
@@ -40,7 +40,15 @@ void set_flags(char* arg, int *flags){
 }
 
 void generate_list(int argc, char **argv){
-	
+	t_file* args;
+	for (int i = 0; i < argc; ++i){
+		if (argv[i][0] == '-'){
+			continue;
+		}
+		args = malloc(sizeof(t_file));
+		args->name = ft_strdup(argv[i]);
+		args->type = FIL; //check with stat/lstat
+	}
 }
 
 int main(int argc, char** argv){
