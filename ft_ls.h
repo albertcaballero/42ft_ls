@@ -29,6 +29,7 @@ enum Type {
 typedef struct file
 {
 	char 	*name;
+	char	*path;
 	struct file	*next;
 	struct file	*subdir;
 	enum Type	type;

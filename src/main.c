@@ -6,6 +6,9 @@
 // -r, --reverse, reverse order F_REVERSE
 // -t, sort by time, newest first F_TIME
 
+
+void print_list(t_file *lst);
+
 void set_flags(char* arg, int *flags){
 	if (!arg || ft_strlen(arg) == 0){
 		return;
@@ -40,14 +43,31 @@ void set_flags(char* arg, int *flags){
 }
 
 void generate_list(int argc, char **argv){
-	t_file* args;
-	for (int i = 0; i < argc; ++i){
+	t_file *head=NULL;
+	t_file* args=malloc(sizeof(t_file));
+	char	*pwd = getcwd(NULL, 0);
+	head = args;
+	for (int i = 1; i < argc; ++i){ 
 		if (argv[i][0] == '-'){
 			continue;
 		}
-		args = malloc(sizeof(t_file));
 		args->name = ft_strdup(argv[i]);
+		args->path = ft_strjoin(cwd, argv[i]);
 		args->type = FIL; //check with stat/lstat
+		if (i+1 == argc){
+			args->next = NULL;
+			break;	
+		}
+		args->next = malloc(sizeof(t_file));
+		args = args->next;
+	}
+	print_list(head);
+	free(pwd);
+}
+
+void print_list(t_file *lst){
+	for (;lst!=NULL;lst=lst->next){
+		ft_dprintf(1, "LST: %s, %d, %s\n",lst->name, lst->type, lst->subdir);
 	}
 }
 
