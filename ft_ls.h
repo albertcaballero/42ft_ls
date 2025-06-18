@@ -2,6 +2,8 @@
 #define FT_LS_H_
 
 #include "libft/libft.h"
+#include <limits.h>
+#include <sys/stat.h>
 
 //Define flags
 #define F_LONG		(1 << 0)
@@ -26,15 +28,28 @@ enum Type {
 	SOCK
 };
 
-typedef struct file
+typedef struct s_file
 {
 	char 	*name;
-	char	*path;
-	struct file	*next;
-	struct file	*subdir;
+	char	path[PATH_MAX];
+    struct stat stats;
+	struct s_file	*next;
+	struct s_file	*subdir;
 	enum Type	type;
 } t_file;
 
+//parsing
+void set_flags(char* arg, int *flags);
+char **clean_args(char **argv, int argc);
 
+//printing
+void list_all(t_file *list, int flags);
+
+//HELPERS
+void print_stats(struct stat buf);
+void print_list(t_file *lst);
+size_t file_list_size(t_file *lst);
+
+//sorting
 
 #endif

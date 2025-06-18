@@ -7,7 +7,7 @@ CC = cc
 
 TMP := .obj/
 
-FILES = main.c
+FILES = main.c helpers.c print_lists.c parsing.c
 SRC := $(addprefix src/,$(FILES))
 OBJS := $(addprefix $(TMP),$(FILES:.c=.o))
 
