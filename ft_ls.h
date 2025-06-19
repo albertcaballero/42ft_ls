@@ -52,4 +52,8 @@ size_t file_list_size(t_file *lst);
 
 //sorting
 
+//t_file list creation
+void find_subdirs(t_file *lst);
+t_file *add_file(char *path, char *name);
+
 #endif

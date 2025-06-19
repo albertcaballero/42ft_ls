@@ -15,7 +15,13 @@ void list_file_all(t_file *file){
 }
 
 void list_all(t_file *list, int flags){
+    //list = sort_list(&list, flags);
     for (;list!=NULL; list=list->next){
+        if (flags & F_RECURS){
+           if (S_ISDIR(list->stats.st_mode))
+               ;
+        }
+
         if (flags & F_LONG)
             list_file_all(list);
         else
