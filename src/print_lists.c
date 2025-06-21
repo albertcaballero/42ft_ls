@@ -5,8 +5,9 @@ void list_dir(const char *dir){
 }
 
 void list_file_all(t_file *file){
-    ft_dprintf(1, "%c%s %i %s %s %i %s %s\n", 
-            'a',"permissions", 
+    // struct tm tm;
+    ft_dprintf(1, "%c%s %i %s %s %i %s %s\n",
+            'a',"permissions",
             file->stats.st_nlink,
             "user","group",
             file->stats.st_size,
@@ -14,18 +15,23 @@ void list_file_all(t_file *file){
             file->name);
 }
 
+void print_entry(t_file *file, int flags){
+    if (flags & F_LONG)
+        list_file_all(file);
+    else
+        ft_dprintf(1, "%s  ", file->name);
+}
+
 void list_all(t_file *list, int flags){
     //list = sort_list(&list, flags);
     for (;list!=NULL; list=list->next){
-        if (flags & F_RECURS){
-           if (S_ISDIR(list->stats.st_mode))
-               ;
+        if (S_ISDIR(list->stats.st_mode)){
+            find_subdirs(list);
         }
+        if (flags & F_RECURS){
+        }
+        print_entry(list, flags);
 
-        if (flags & F_LONG)
-            list_file_all(list);
-        else
-            ft_dprintf(1, "%s  ", list->name);
     }
     ft_dprintf(1, "\n");
 }

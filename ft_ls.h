@@ -4,6 +4,9 @@
 #include "libft/libft.h"
 #include <limits.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <sys/types.h>
+#include <dirent.h>
 
 //Define flags
 #define F_LONG		(1 << 0)
@@ -18,16 +21,6 @@ Toggle a flag	user_flags ^= FLAG;
 Check a flag	if (user_flags & FLAG)
 */
 
-enum Type {
-	FIL,
-	DIR,
-	SYML,
-	BLOCK,
-	DEV,
-	PIPE,
-	SOCK
-};
-
 typedef struct s_file
 {
 	char 	*name;
@@ -35,7 +28,6 @@ typedef struct s_file
     struct stat stats;
 	struct s_file	*next;
 	struct s_file	*subdir;
-	enum Type	type;
 } t_file;
 
 //parsing
@@ -54,6 +46,6 @@ size_t file_list_size(t_file *lst);
 
 //t_file list creation
 void find_subdirs(t_file *lst);
-t_file *add_file(char *path, char *name);
+void add_file(char *path, char *name, t_file *file);
 
 #endif
