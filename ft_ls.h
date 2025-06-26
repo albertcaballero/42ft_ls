@@ -4,7 +4,7 @@
 #include "libft/libft.h"
 #include <limits.h>
 #include <sys/stat.h>
-#include <sys/time.h>
+#include <time.h>
 #include <sys/types.h>
 #include <dirent.h>
 
@@ -28,6 +28,7 @@ typedef struct s_file
     struct stat stats;
 	struct s_file	*next;
 	struct s_file	*subdir;
+    int     hidden;
 } t_file;
 
 //parsing
@@ -35,7 +36,7 @@ void set_flags(char* arg, int *flags);
 char **clean_args(char **argv, int argc);
 
 //printing
-void list_all(t_file *list, int flags);
+void list_all(t_file *list, int flags, int depth);
 
 //HELPERS
 void print_stats(struct stat buf);
@@ -45,7 +46,14 @@ size_t file_list_size(t_file *lst);
 //sorting
 
 //t_file list creation
-void find_subdirs(t_file *lst);
-void add_file(char *path, char *name, t_file *file);
+void find_subdirs(t_file *lst, int depth);
+void fill_file(char *path, char *name, t_file *file);
+t_file* append_file(t_file **head, char *path, char *name);
+
+//t_file sorting
+t_file *sort_list(t_file *orig);
+
+//details -a
+void list_file_all(t_file *file);
 
 #endif

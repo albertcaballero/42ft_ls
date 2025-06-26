@@ -8,7 +8,7 @@ t_file* generate_list(char **argv){
 	head = args;
     args->next = NULL;
 	for (int i = 0; argv[i] != NULL; ++i){
-	    add_file(cwd, argv[i], args);
+	    fill_file("", argv[i], args);
 		if (!argv[i+1]){
 			break;
 		}
@@ -17,8 +17,7 @@ t_file* generate_list(char **argv){
 	}
     //if no arguments given, it's equivalent to "ls ."
     if (!argv[0]){
-        //dprintf(2, "No default args, going with .\n");
-        add_file(cwd, ".", args);
+        fill_file("", ".", args);
     }
 	free(cwd);
     return head;
@@ -39,8 +38,6 @@ int main(int argc, char** argv){
     }
 	filelst = generate_list(newargs);
     free_array(newargs);
-    if (flags & F_RECURS)
-        find_subdirs(filelst);
-    list_all(filelst, flags);
+    list_all(filelst, flags, 0);
     //free_list(filelst);
 }

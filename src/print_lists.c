@@ -1,37 +1,37 @@
 #include "../ft_ls.h"
 
-void list_dir(const char *dir){
-    (void) dir;
-}
-
-void list_file_all(t_file *file){
-    // struct tm tm;
-    ft_dprintf(1, "%c%s %i %s %s %i %s %s\n",
-            'a',"permissions",
-            file->stats.st_nlink,
-            "user","group",
-            file->stats.st_size,
-            "mod date", //file->stats.st_mtim,
-            file->name);
-}
-
 void print_entry(t_file *file, int flags){
+    if (file->hidden && !(flags & F_ALL))
+        return;
     if (flags & F_LONG)
         list_file_all(file);
     else
         ft_dprintf(1, "%s  ", file->name);
 }
 
-void list_all(t_file *list, int flags){
-    //list = sort_list(&list, flags);
-    for (;list!=NULL; list=list->next){
-        if (S_ISDIR(list->stats.st_mode)){
-            find_subdirs(list);
-        }
-        if (flags & F_RECURS){
-        }
-        print_entry(list, flags);
 
+
+void list_all(t_file *list, int flags, int depth){
+    int len = file_list_size(list);
+    t_file *tmp = list;
+    if (depth > 1 && !(flags & F_RECURS))
+        return;
+    //list = sort_list(list);
+    while (tmp){
+        if (!S_ISDIR(tmp->stats.st_mode) || depth != 0){
+            print_entry(tmp, flags);
+        }
+        tmp = tmp->next;
+    }
+    ft_dprintf(1, "\n");
+    for (;list!=NULL; list=list->next){
+        if (S_ISDIR(list->stats.st_mode) && (depth == 0 || flags & F_RECURS)){
+            if (len > 1)
+                ft_dprintf(1, "\n%s:\n", list->path);
+            find_subdirs(list, flags & F_RECURS);
+            list_all(list->subdir, flags, depth + 1);
+            //free_entry(list) //por si haces "ft_ls -R /"
+        }
     }
     ft_dprintf(1, "\n");
 }

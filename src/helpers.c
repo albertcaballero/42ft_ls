@@ -4,7 +4,7 @@
 
 void print_list(t_file *lst){
 	for (;lst!=NULL;lst=lst->next){
-		ft_dprintf(1, "LST: %s,\n",lst->name);
+		ft_dprintf(1, "%s,\n",lst->name);
 	}
 }
 
