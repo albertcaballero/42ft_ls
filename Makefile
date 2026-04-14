@@ -14,9 +14,9 @@ OBJS := $(addprefix $(TMP),$(FILES:.c=.o))
 
 
 
-all: make_libft $(NAME)
+all: $(TMP) make_libft $(NAME)
 
-$(TMP)%.o: src/%.c $(LIBFT) Makefile $(TMP) $(LIBRARY)
+$(TMP)%.o: src/%.c $(LIBFT) Makefile $(LIBRARY)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(NAME): $(OBJS) $(LIBFT)
@@ -26,7 +26,7 @@ $(TMP):
 	mkdir -p $(TMP)
 
 make_libft:
-	$(MAKE) -C libft #--no-print-directory
+	$(MAKE) -C libft --no-print-directory
 
 clean:
 	$(MAKE) fclean -C libft --no-print-directory

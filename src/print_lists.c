@@ -23,7 +23,7 @@ void list_all(t_file *list, int flags, int depth){
         }
         tmp = tmp->next;
     }
-    ft_dprintf(1, "\n");
+    // ft_dprintf(1, "\n");
     for (;list!=NULL; list=list->next){
         if (S_ISDIR(list->stats.st_mode) && (depth == 0 || flags & F_RECURS)){
             if (len > 1)
