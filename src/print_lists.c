@@ -1,37 +1,48 @@
 #include "../ft_ls.h"
 
-void print_entry(t_file *file, int flags){
-    if (file->hidden && !(flags & F_ALL))
+void print_entry(t_file *file, int flags, t_colwidth widths){
+    if (LS_HIDDEN(file->hidden))
         return;
     if (flags & F_LONG)
-        list_file_all(file);
+        list_file_all(file, widths);
     else
         ft_dprintf(1, "%s  ", file->name);
 }
-
-
 
 void list_all(t_file *list, int flags, int depth){
     int len = file_list_size(list);
     t_file *tmp = list;
     if (depth > 1 && !(flags & F_RECURS))
         return;
-    //list = sort_list(list);
-    while (tmp){
-        if (!S_ISDIR(tmp->stats.st_mode) || depth != 0){
-            print_entry(tmp, flags);
-        }
+    //TODO sort
+    list = sort_list(list);
+    t_colwidth widths = get_col_widths(tmp);
+    while (tmp ){ //print everything
+        if (!S_ISDIR(tmp->stats.st_mode) && depth == 0){
+            print_entry(tmp, flags, widths);
+        } else if (depth != 0)
+            print_entry(tmp, flags, widths);
         tmp = tmp->next;
     }
-    // ft_dprintf(1, "\n");
-    for (;list!=NULL; list=list->next){
-        if (S_ISDIR(list->stats.st_mode) && (depth == 0 || flags & F_RECURS)){
-            if (len > 1)
+    if (depth != 0)
+        ft_dprintf(1, "\n");
+    if (depth != 0 && !(flags & F_RECURS)){
+        free_file_list(list);
+        return;
+    }
+    tmp = list;
+    for (;list!=NULL; list=list->next){ //print subdirs
+        if (S_ISDIR(list->stats.st_mode)){
+            if (LS_HIDDEN(list->hidden) && !LS_ISDOTDIR(list->name))
+                continue;
+            if (len > 1 || (depth == 0 && flags & F_RECURS))
                 ft_dprintf(1, "\n%s:\n", list->path);
+            // if (!LS_ISDOTDIR(list->name))
             find_subdirs(list, flags & F_RECURS);
             list_all(list->subdir, flags, depth + 1);
-            //free_entry(list) //por si haces "ft_ls -R /"
         }
     }
-    ft_dprintf(1, "\n");
+
+    if (depth == 0)
+        ft_dprintf(1, "\n");
 }

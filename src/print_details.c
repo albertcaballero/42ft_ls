@@ -1,6 +1,37 @@
 
 #include "../ft_ls.h"
 
+static int int_len(long n)
+{
+	int	count;
+
+	count = 0;
+	if (n == 0)
+		count = 1;
+	while (n > 0)
+	{
+		n /= 10;
+		count++;
+	}
+	return (count);
+}
+
+static void ft_padding_str(int max, int current, char *str)
+{
+    int spaces = max - current;
+    while (spaces-- > 0)
+        write(1, " ", 1);
+    ft_dprintf(1, "%s ", str);
+}
+
+static void ft_padding_int(int max, int current, int num)
+{
+    int spaces = max - current;
+    while (spaces-- > 0)
+        write(1, " ", 1);
+    ft_dprintf(1, "%i ", num);
+}
+
 static char get_file_type(int mode)
 {
 	mode = (mode & S_IFMT);
@@ -44,27 +75,62 @@ static char *display_file_perm(char *chmod, int mode)
     return chmod;
 }
 
-/*
-static void		display_time(t_file *file)
+t_colwidth get_col_widths(t_file *files)
 {
-	time_t	today;
-	char	*s;
+    t_colwidth w = {0};
+    t_file *current = files;
 
-	s = ctime(&file->stats.st_mtim);
-	ft_printf(" %.12s ", s);
+    while (current)
+    {
+        struct passwd *pw = getpwuid(current->stats.st_uid);
+        struct group  *gr = getgrgid(current->stats.st_gid);
+
+        int links = int_len((int)current->stats.st_nlink);
+        int size  = int_len((int)current->stats.st_size);
+        int user  = pw ? ft_strlen(pw->pw_name) : 7;
+        int group = gr ? ft_strlen(gr->gr_name) : 7;
+
+        if (links > w.links) w.links = links;
+        if (size  > w.size)  w.size  = size;
+        if (user  > w.user)  w.user  = user;
+        if (group > w.group) w.group = group;
+
+        current = current->next;
+    }
+    return w;
 }
-*/
 
-//https://stackoverflow.com/questions/13542345/how-to-convert-st-mtime-which-get-from-stat-function-to-string-or-char
-void list_file_all(t_file *file){
-    // struct tm tm;
+void list_file_all(t_file *file, t_colwidth widths){
     char perms[11];
-    ft_dprintf(1, "%s %i %s %s %i %s %s\n",
-            display_file_perm(perms, file->stats.st_mode),
-            file->stats.st_nlink,
-            "user","group", //getpwuid & getgrgid
-            file->stats.st_size,
-            ctime(&file->stats.st_mtime),
-            file->name);
-}
 
+    //time
+    char time_buf[13];
+    struct tm *tm_info;
+    tm_info = localtime(&file->stats.st_mtime);
+    time_t now = time(NULL);
+    if (now - file->stats.st_mtime > 15552000) // ~6 months
+        strftime(time_buf, sizeof(time_buf), "%b %e  %Y", tm_info);
+    else
+        strftime(time_buf, sizeof(time_buf), "%b %e %H:%M", tm_info);
+
+    //user and group
+    struct passwd *pw = getpwuid(file->stats.st_uid);
+    struct group  *gr = getgrgid(file->stats.st_gid);
+    char *user  = pw ? pw->pw_name : "unknown";
+    char *group = gr ? gr->gr_name : "unknown";
+
+    // ft_dprintf(1, "%s %i %s %s %i %s %s\n",
+    //         display_file_perm(perms, file->stats.st_mode),
+    //         file->stats.st_nlink,
+    //         user,group,
+    //         file->stats.st_size,
+    //         time_buf,
+    //         file->name);
+
+    ft_dprintf(1, "%s ", display_file_perm(perms, file->stats.st_mode));
+    ft_padding_int(widths.links, int_len(file->stats.st_nlink), file->stats.st_nlink);
+    ft_padding_str(widths.user, ft_strlen(user), user);
+    ft_padding_str(widths.group, ft_strlen(group), group);
+    ft_padding_int(widths.size, int_len(file->stats.st_size), file->stats.st_size);
+    ft_dprintf(1, "%s %s\n", time_buf, file->name);
+}

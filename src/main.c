@@ -27,7 +27,6 @@ int main(int argc, char** argv){
 	int flags = 0;
     t_file *filelst;
     char **newargs;
-
 	for (int i = 0; i < argc; ++i){
 		set_flags(argv[i], &flags);
 	}
@@ -39,5 +38,5 @@ int main(int argc, char** argv){
 	filelst = generate_list(newargs);
     free_array(newargs);
     list_all(filelst, flags, 0);
-    //free_list(filelst);
+    free_file_list(filelst);
 }

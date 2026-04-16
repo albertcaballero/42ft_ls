@@ -7,6 +7,8 @@
 #include <time.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <pwd.h>
+#include <grp.h>
 
 //Define flags
 #define F_LONG		(1 << 0)
@@ -15,6 +17,9 @@
 #define F_REVERSE	(1 << 3)
 #define F_TIME		(1 << 4)
 
+#define LS_HIDDEN(x) (x && !(flags & F_ALL))
+#define LS_ISDOTDIR(x) (!ft_strncmp(x, ".", 2))
+#define LS_ISPARENTDIR(x) (!strncmp(x, "..", 3))
 /* Set a flag	user_flags	|= FLAG;
 Clear a flag	user_flags &= ~FLAG;
 Toggle a flag	user_flags ^= FLAG;
@@ -30,6 +35,13 @@ typedef struct s_file
 	struct s_file	*subdir;
     int     hidden;
 } t_file;
+
+typedef struct s_colwidth {
+    int links;
+    int user;
+    int group;
+    int size;
+} t_colwidth;
 
 //parsing
 void set_flags(char* arg, int *flags);
@@ -49,11 +61,14 @@ size_t file_list_size(t_file *lst);
 void find_subdirs(t_file *lst, int depth);
 void fill_file(char *path, char *name, t_file *file);
 t_file* append_file(t_file **head, char *path, char *name);
+void free_file(t_file *file);
+void free_file_list(t_file *list);
 
 //t_file sorting
 t_file *sort_list(t_file *orig);
 
 //details -a
-void list_file_all(t_file *file);
+void list_file_all(t_file *file, t_colwidth widths);
+t_colwidth get_col_widths(t_file *files);
 
 #endif

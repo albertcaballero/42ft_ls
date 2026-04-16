@@ -2,10 +2,11 @@
 #include "../ft_ls.h"
 #include <stdlib.h>
 
+//find directory files
 void find_subdirs(t_file *list, int depth){
     DIR* FD;
     struct dirent* infile;
-    t_file *tmp;
+    (void)depth;
 
     if (!S_ISDIR(list->stats.st_mode))
         return;
@@ -17,12 +18,10 @@ void find_subdirs(t_file *list, int depth){
         return;
     }
     while ((infile = readdir(FD))) {
-        if (!ft_strncmp (infile->d_name, ".", 2) || !strncmp (infile->d_name, "..", 3))
+        if (LS_ISDOTDIR(infile->d_name) || LS_ISPARENTDIR(infile->d_name))
             continue;
-        tmp = append_file(&list->subdir, list->path, infile->d_name);
-        if (S_ISDIR(tmp->stats.st_mode) && depth == 1){
-            find_subdirs(tmp, depth);
-        }
+        //TODO check if hidden to improve performance
+        append_file(&list->subdir, list->path, infile->d_name);
     }
     closedir(FD);
 }
@@ -69,5 +68,24 @@ void fill_file(char *path, char *name, t_file *file){
     file->stats = statbuf;
     file->subdir = NULL;
     file->next = NULL;
-    file->hidden = file->name[0] == '.' && ft_strlen(file->name) > 1;
+    file->hidden = file->name[0] == '.';
+}
+
+void free_file_list(t_file *list){
+    t_file *fr = NULL;
+    for (;list!=NULL; list=list->next){
+        free_file(fr);
+        fr = list;
+    }
+    free_file(fr);
+}
+
+void free_file(t_file *file){
+    if (!file)
+        return;
+
+    if (file->name)
+        free(file->name);
+    free(file);
+    file = NULL;
 }

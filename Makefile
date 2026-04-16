@@ -20,7 +20,7 @@ $(TMP)%.o: src/%.c $(LIBFT) Makefile $(LIBRARY)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 $(NAME): $(OBJS) $(LIBFT)
-	$(CC) $(CFLAGS) -L libft -lft -o $@ $^
+	$(CC) $(CFLAGS) -L libft -lft -o $@ $^ -fsanitize=address
 
 $(TMP):
 	mkdir -p $(TMP)
