@@ -55,8 +55,6 @@ void print_stats(struct stat buf);
 void print_list(t_file *lst);
 size_t file_list_size(t_file *lst);
 
-//sorting
-
 //t_file list creation
 void find_subdirs(t_file *lst, int depth);
 void fill_file(char *path, char *name, t_file *file);
@@ -65,7 +63,7 @@ void free_file(t_file *file);
 void free_file_list(t_file *list);
 
 //t_file sorting
-t_file *sort_list(t_file *orig);
+t_file *sort_list(t_file *orig, int flags);
 
 //details -a
 void list_file_all(t_file *file, t_colwidth widths);
