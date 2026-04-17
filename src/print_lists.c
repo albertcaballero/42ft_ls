@@ -14,8 +14,8 @@ void list_all(t_file *list, int flags, int depth){
     t_file *tmp = list;
     if (depth > 1 && !(flags & F_RECURS))
         return;
-    //TODO sort
-    list = sort_list(list);
+
+    list = sort_list(list, flags);
     t_colwidth widths = get_col_widths(tmp);
     while (tmp ){ //print everything
         if (!S_ISDIR(tmp->stats.st_mode) && depth == 0){
@@ -33,7 +33,7 @@ void list_all(t_file *list, int flags, int depth){
     tmp = list;
     for (;list!=NULL; list=list->next){ //print subdirs
         if (S_ISDIR(list->stats.st_mode)){
-            if (LS_HIDDEN(list->hidden) && !LS_ISDOTDIR(list->name))
+            if (LS_HIDDEN(list->hidden) && !LS_ISDOTDIR(list->name) && !LS_ISPARENTDIR(list->name))
                 continue;
             if (len > 1 || (depth == 0 && flags & F_RECURS))
                 ft_dprintf(1, "\n%s:\n", list->path);
@@ -42,6 +42,7 @@ void list_all(t_file *list, int flags, int depth){
             list_all(list->subdir, flags, depth + 1);
         }
     }
+    free_file_list(tmp);
 
     if (depth == 0)
         ft_dprintf(1, "\n");

@@ -38,5 +38,5 @@ int main(int argc, char** argv){
 	filelst = generate_list(newargs);
     free_array(newargs);
     list_all(filelst, flags, 0);
-    free_file_list(filelst);
+    // free_file_list(filelst);
 }
