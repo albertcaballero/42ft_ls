@@ -1,8 +1,8 @@
 
 #include "../ft_ls.h"
 
-bool compare_files(t_file *a, t_file *b, int flags){
-    bool rev = flags & F_REVERSE;
+int compare_files(t_file *a, t_file *b, int flags){
+    int rev = flags & F_REVERSE;
     //use ^rev to flip result if set (XOR)
     if (flags & F_TIME){
         if (a->stats.st_mtim.tv_sec != b->stats.st_mtim.tv_sec)
