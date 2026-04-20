@@ -1,17 +1,30 @@
 
 #include "../ft_ls.h"
 
+void filename_tolower(char *name) {
+    for (int i = 0; name[i]; i++) {
+        name[i] = ft_tolower(name[i]);
+    }
+}
+
 int compare_files(t_file *a, t_file *b, int flags){
-    int rev = flags & F_REVERSE;
+    int rev = !!(flags & F_REVERSE);
     //use ^rev to flip result if set (XOR)
+    char path_a[PATH_MAX];
+    char path_b[PATH_MAX];
+    ft_strlcpy(path_a, a->path, PATH_MAX);
+    ft_strlcpy(path_b, b->path, PATH_MAX);
+    filename_tolower(path_a);
+    filename_tolower(path_b);
+
     if (flags & F_TIME){
         if (a->stats.st_mtim.tv_sec != b->stats.st_mtim.tv_sec)
             return (a->stats.st_mtim.tv_sec > b->stats.st_mtim.tv_sec) ^ rev;
         if (a->stats.st_mtim.tv_nsec != b->stats.st_mtim.tv_nsec)
             return (a->stats.st_mtim.tv_nsec > b->stats.st_mtim.tv_nsec) ^ rev;
-        return (ft_strncmp(a->name, b->name, ft_strlen(a->name) + 1) < 0) ^ rev;
+        return (ft_strncmp(path_a, path_b, ft_strlen(path_a) + 1) < 0) ^ rev;
     }else{
-        return (ft_strncmp(a->name, b->name, ft_strlen(a->name) + 1) < 0) ^ rev;
+        return (ft_strncmp(path_a, path_b, ft_strlen(path_a) + 1) < 0) ^ rev;
     }
 }
 

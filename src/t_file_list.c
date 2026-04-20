@@ -3,27 +3,28 @@
 #include <stdlib.h>
 
 //find directory files
-void find_subdirs(t_file *list, int depth){
+int find_subdirs(t_file *list, int depth){
     DIR* FD;
     struct dirent* infile;
     (void)depth;
 
     if (!S_ISDIR(list->stats.st_mode))
-        return;
+        return -1;
     if (list->subdir)
-        return;
+        return -1;
     FD = opendir(list->path);
     if (!FD){
-        ft_dprintf(2, "Error opening directory %s\n", list->name);
-        return;
+        ft_dprintf(2, "ft_ls: cannot open directory '%s': Permission denied\n", list->name);
+        return -1;
     }
+    // if (LS_ISDOTDIR(list->name) || LS_ISPARENTDIR(list->name))
+    //     return 0;
     while ((infile = readdir(FD))) {
-        if (LS_ISDOTDIR(infile->d_name) || LS_ISPARENTDIR(infile->d_name))
-            continue;
         //TODO check if hidden to improve performance
         append_file(&list->subdir, list->path, infile->d_name);
     }
     closedir(FD);
+    return 0;
 }
 
 t_file* append_file(t_file **head, char *path, char *name){
@@ -63,6 +64,7 @@ void fill_file(char *path, char *name, t_file *file){
     ft_strlcat(file->path, file->name, PATH_MAX);
     if (lstat(file->path, &statbuf) == -1){
         ft_dprintf(2, "ft_ls: cannot access '%s': No such file or dir\n", file->name);
+        file->name[0] = '\0';
         return;
     }
     file->stats = statbuf;

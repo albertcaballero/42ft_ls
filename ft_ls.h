@@ -56,7 +56,7 @@ void print_list(t_file *lst);
 size_t file_list_size(t_file *lst);
 
 //t_file list creation
-void find_subdirs(t_file *lst, int depth);
+int find_subdirs(t_file *lst, int depth);
 void fill_file(char *path, char *name, t_file *file);
 t_file* append_file(t_file **head, char *path, char *name);
 void free_file(t_file *file);

@@ -100,6 +100,18 @@ t_colwidth get_col_widths(t_file *files)
     return w;
 }
 
+void print_symlink(t_file *file){
+    if (!S_ISLNK(file->stats.st_mode))
+        return;
+    char buf[PATH_MAX];
+    ssize_t len = readlink(file->path, buf, sizeof(buf) - 1);
+    if (len != -1)
+    {
+        buf[len] = '\0';
+        ft_dprintf(1, " -> %s", buf);
+    }
+}
+
 void list_file_all(t_file *file, t_colwidth widths){
     char perms[11];
 
@@ -132,5 +144,7 @@ void list_file_all(t_file *file, t_colwidth widths){
     ft_padding_str(widths.user, ft_strlen(user), user);
     ft_padding_str(widths.group, ft_strlen(group), group);
     ft_padding_int(widths.size, int_len(file->stats.st_size), file->stats.st_size);
-    ft_dprintf(1, "%s %s\n", time_buf, file->name);
+    ft_dprintf(1, "%s %s", time_buf, file->name);
+    print_symlink(file);
+    ft_dprintf(1, "\n");
 }
